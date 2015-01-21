@@ -15,6 +15,7 @@ func (user *User) printInfo() {
 	fmt.Println()
 	ct.ResetColor()
 }
+
 func Me() {
 	user := new(User)
 	err := FbGet("/me", &user)

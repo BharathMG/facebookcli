@@ -18,13 +18,31 @@ func main() {
 		{
 			Name:  "me",
 			Usage: "Displays your profile info",
-			Action: func(c *cli.Context) {
-				err := ValidateSession()
-				if err != nil {
-					fmt.Println(err)
-					return
-				}
-				Me()
+			Subcommands: []cli.Command{
+				{
+					Name:  "info",
+					Usage: "Displays your profile information",
+					Action: func(c *cli.Context) {
+						err := ValidateSession()
+						if err != nil {
+							fmt.Println(err)
+							return
+						}
+						Me()
+					},
+				},
+				{
+					Name:  "feed",
+					Usage: "Displays your latest posts",
+					Action: func(c *cli.Context) {
+						err := ValidateSession()
+						if err != nil {
+							fmt.Println(err)
+							return
+						}
+						Me()
+					},
+				},
 			},
 		},
 		{
@@ -36,6 +54,22 @@ func main() {
 		},
 		{
 			Name:  "user",
+			Usage: "Show user info",
+			Action: func(c *cli.Context) {
+				err := ValidateSession()
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				if len(c.Args()) == 0 {
+					fmt.Println("Specify user. Ex facebookcli user RobPike")
+					return
+				}
+				ShowUser(c.Args()[0])
+			},
+		},
+		{
+			Name:  "feed",
 			Usage: "Show user info",
 			Action: func(c *cli.Context) {
 				err := ValidateSession()
