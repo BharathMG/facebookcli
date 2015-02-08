@@ -16,8 +16,8 @@ var done chan bool
 var session *fb.Session
 
 var (
-	CLIENT_ID     = "893451360706603"
-	CLIENT_SECRET = ""
+	CLIENT_ID     = os.Getenv("FB_CLIENT_ID")
+	CLIENT_SECRET = os.Getenv("FB_CLIENT_SECRET")
 )
 
 const (
