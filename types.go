@@ -8,10 +8,12 @@ type User struct {
 }
 
 type FacebookFeed struct {
-	Id          string `facebook:",required"`
 	Story       string
 	FeedFrom    *FacebookFeedFrom `facebook:"from"`
 	CreatedTime string
+	Message     string
+	FeedTo      *FacebookFeedFrom `facebook:"to"`
+	StatusType  string
 }
 
 type FacebookFeedFrom struct {

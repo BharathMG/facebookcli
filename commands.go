@@ -16,6 +16,10 @@ func (user *User) printInfo() {
 	ct.ResetColor()
 }
 
+func print(data []FacebookFeed) {
+	fmt.Printf("%#v", data)
+}
+
 func Me() {
 	user := new(User)
 	err := FbGet("/me", &user)
@@ -34,4 +38,23 @@ func ShowUser(username string) {
 		return
 	}
 	user.printInfo()
+}
+
+func ShowWall(args []string) {
+	results, err := FbPagingGet("/me/home?fields=status_type,message,from,to")
+	feeds := make([]FacebookFeed, len(results))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	for i, val := range results {
+		val.Decode(&feeds[i])
+	}
+	for _, val := range feeds {
+		ct.ChangeColor(ct.Green, false, ct.None, false)
+		fmt.Printf("%v : %v From %v", val.StatusType, val.Message, val.FeedFrom.Name)
+		fmt.Println()
+		ct.ResetColor()
+	}
+
 }

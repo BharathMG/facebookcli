@@ -69,19 +69,15 @@ func main() {
 			},
 		},
 		{
-			Name:  "feed",
-			Usage: "Show user info",
+			Name:  "wall",
+			Usage: "Show my timeline posts",
 			Action: func(c *cli.Context) {
 				err := ValidateSession()
 				if err != nil {
 					fmt.Println(err)
 					return
 				}
-				if len(c.Args()) == 0 {
-					fmt.Println("Specify user. Ex facebookcli user RobPike")
-					return
-				}
-				ShowUser(c.Args()[0])
+				ShowWall(c.Args())
 			},
 		},
 	}
