@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"github.com/codegangsta/cli"
 	fb "github.com/huandu/facebook"
 	"github.com/skratchdot/open-golang/open"
 	"io/ioutil"
@@ -16,8 +17,15 @@ var done chan bool
 var session *fb.Session
 
 var (
-	CLIENT_ID     = os.Getenv("FB_CLIENT_ID")
-	CLIENT_SECRET = os.Getenv("FB_CLIENT_SECRET")
+	CLIENT_ID          = os.Getenv("FB_CLIENT_ID")
+	CLIENT_SECRET      = os.Getenv("FB_CLIENT_SECRET")
+	RefreshAccessToken = cli.Command{
+		Name:  "refresh_access",
+		Usage: "Refresh your access token",
+		Action: func(c *cli.Context) {
+			GetFbAccessToken()
+		},
+	}
 )
 
 const (
@@ -26,8 +34,8 @@ const (
 	FB_ACCESS_TOKEN_URL = "https://graph.facebook.com/oauth/access_token?client_id=%v&client_secret=%v&redirect_uri=%v&code=%v"
 )
 
-func ValidateSession() error {
-	err := checkSession()
+func HandleSession() error {
+	err := verifySession()
 	if err != nil {
 		fmt.Println(err)
 		GetFbAccessToken()
@@ -81,7 +89,7 @@ func validateToken() error {
 	return session.Validate()
 }
 
-func checkSession() error {
+func verifySession() error {
 	if os.Getenv("ACCESS_TOKEN_FBCLI") != "" {
 		return validateToken()
 	}
@@ -92,12 +100,12 @@ func GetFbAccessToken() {
 	done = make(chan bool)
 	permissions := []string{"read_stream", "user_about_me", "email"}
 	scope := strings.Join(permissions, ",")
-	go open.Run(fmt.Sprintf(FB_DIALOG_AUTH_URL, CLIENT_ID, REDIRECT_URI, scope))
 	go func() {
 		http.HandleFunc("/", AccessTokenHandler)
 		http.HandleFunc("/favicon.ico", http.NotFound)
 		http.ListenAndServe(":3000", nil)
 	}()
+	go open.Run(fmt.Sprintf(FB_DIALOG_AUTH_URL, CLIENT_ID, REDIRECT_URI, scope))
 	<-done
 }
 
